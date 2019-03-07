@@ -35,6 +35,7 @@ class App extends Component {
     this.getMoviesByPage = this.getMoviesByPage.bind(this);
     this.getMovieDetail = this.getMovieDetail.bind(this);
     this.getMoviesByCast = this.getMoviesByCast.bind(this);
+    this.cleanMovie = this.cleanMovie.bind((this));
   }
 
   async componentDidMount(){
@@ -123,6 +124,20 @@ class App extends Component {
     return fetch(this.getTheMoviesByCastUrl(personId)).then(data => data.json());
   }
 
+  cleanMovie(){
+    this.movieDetail = {
+      title: '',
+      tagline: '',
+      imgUrl: '',
+      genres: [],
+      runtime: '',
+      description: '',
+      cast: [],
+      imgBaseUrlMovie: '',
+      imgBaseUrlCast: ''
+    };
+    this.setState({movie:this.movieDetail});
+  }
   getMovieDetail(movieId) {
 
     fetch(this.getMovieDetailUrl(movieId)).then(data => data.json()).then( movie => {
@@ -141,13 +156,14 @@ class App extends Component {
     }).then(data => data.json()).then( credit => {
 
       this.movieDetail.cast= credit.cast;
-
-      this.setState({movie: this.movieDetail});
+      
       return fetch(this.getConfigUrl());
 
     }).then(data => data.json()).then( conf => {
       this.movieDetail.imgBaseUrlMovie = conf.images.base_url + conf.images.poster_sizes[2];
       this.movieDetail.imgBaseUrlCast = conf.images.base_url + conf.images.poster_sizes[0];
+
+      this.setState({movie: this.movieDetail});
     });
   }
 
@@ -171,7 +187,7 @@ class App extends Component {
               )}/>
               <Route path="/detail/:id" render={(props) => {
                 let id = props.location.pathname.replace('/detail/','');
-                return(<MovieDetail getMoviesByCast={this.getMoviesByCast} getMovieDetail={this.getMovieDetail} movie={this.state.movie} conf={this.state.conf} apiKey={this.apiKey} apiUrl={this.apiBaseUrl} id={id}/>);
+                return(<MovieDetail cleanMovie={this.cleanMovie} getMoviesByCast={this.getMoviesByCast} getMovieDetail={this.getMovieDetail} movie={this.state.movie} conf={this.state.conf} apiKey={this.apiKey} apiUrl={this.apiBaseUrl} id={id}/>);
               }}/>
             </Switch>
           </div>

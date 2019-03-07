@@ -34,6 +34,10 @@ class MovieDetail extends Component {
         this.props.getMovieDetail(this.props.id);
     }
 
+    componentWillUnmount() {
+        this.props.cleanMovie();
+    }
+
 
     render() {
         return(
