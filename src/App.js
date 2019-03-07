@@ -11,17 +11,8 @@ class App extends Component {
     super();
     this.apiKey= '7bf47e2b6bb5fcf163cad9385851f099';
     this.apiBaseUrl= 'https://api.tmdb.org/3/';
-    this.movieDetail = {
-      title: '',
-      tagline: '',
-      imgUrl: '',
-      genres: [],
-      runtime: '',
-      description: '',
-      cast: [],
-      imgBaseUrlMovie: '',
-      imgBaseUrlCast: ''
-    };
+
+    this.constructEmptyMovieDetail();
 
     this.state = {
       movies: [],
@@ -124,21 +115,28 @@ class App extends Component {
     return fetch(this.getTheMoviesByCastUrl(personId)).then(data => data.json());
   }
 
-  cleanMovie(){
+  constructEmptyMovieDetail() {
     this.movieDetail = {
       title: '',
       tagline: '',
       imgUrl: '',
       genres: [],
-      runtime: '',
+      runtime: 0,
       description: '',
       cast: [],
+      popularity: 0,
       imgBaseUrlMovie: '',
       imgBaseUrlCast: ''
     };
+  }
+
+  cleanMovie(){
+    this.constructEmptyMovieDetail();
     this.setState({movie:this.movieDetail});
   }
   getMovieDetail(movieId) {
+
+
 
     fetch(this.getMovieDetailUrl(movieId)).then(data => data.json()).then( movie => {
 
@@ -149,14 +147,14 @@ class App extends Component {
       this.movieDetail.description= movie.overview;
       this.movieDetail.imgUrl= movie.poster_path;
       this.movieDetail.releasedDate= movie.release_date;
-
+      this.movieDetail.popularity= movie.popularity;
 
       return fetch(this.getCreditUrl(movieId))
 
     }).then(data => data.json()).then( credit => {
 
       this.movieDetail.cast= credit.cast;
-      
+
       return fetch(this.getConfigUrl());
 
     }).then(data => data.json()).then( conf => {

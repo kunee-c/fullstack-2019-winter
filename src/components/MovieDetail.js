@@ -55,8 +55,9 @@ class MovieDetail extends Component {
                         <p>Genres: {this.props.movie.genres.map(genre => <span key={genre.id}>{genre.name} </span>)}</p>
                     }
                     {this.props.movie.tagline && <p>Tagline: {this.props.movie.tagline}</p>}
-                    <p>Runtime: {this.props.movie.runtime} mn</p>
+                    {this.props.movie.runtime && <p>Runtime: {this.props.movie.runtime} mn</p>}
                     <p>Release date: {this.props.movie.releasedDate}</p>
+                    <p>Popularity: {this.props.movie.popularity}</p>
                     <br/>
                 </figcaption>
                 </div>
