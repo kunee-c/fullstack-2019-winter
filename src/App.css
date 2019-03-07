@@ -10,3 +10,31 @@ h1, h2, h3, h4 {
   font-weight: 500;
 }
 
+a:hover {
+  color: #f9511d
+}
+
+
+#logoTiff:hover {
+  animation-name: moveBtn;
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes moveBtn {
+
+  30% {
+    transform:rotate(45deg);
+
+  }
+
+  60% {
+    transform:rotate(-45deg);
+
+  }
+
+  100% {
+    transform:rotate(0deg);
+
+  }
+}

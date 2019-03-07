@@ -28,11 +28,13 @@ class App extends Component {
       moviesPerPage: [],
       totalPages: 0,
       currentPage: 1,
-      conf: {}
+      conf: {},
+      movie: this.movieDetail
     }
 
     this.getMoviesByPage = this.getMoviesByPage.bind(this);
     this.getMovieDetail = this.getMovieDetail.bind(this);
+    this.getMoviesByCast = this.getMoviesByCast.bind(this);
   }
 
   async componentDidMount(){
@@ -106,17 +108,22 @@ class App extends Component {
   }
 
   getMovieDetailUrl(movieIf) {
-    return `${this.apiBaseUrl}movie/${movieIf}?api_key=${this.props.apiKey}`;
+    return `${this.apiBaseUrl}movie/${movieIf}?api_key=${this.apiKey}`;
   }
 
   getCreditUrl(movie) {
-    return `${this.apiBaseUrl}movie/${movie}/credits?api_key=${this.props.apiKey}`;
+    return `${this.apiBaseUrl}movie/${movie}/credits?api_key=${this.apiKey}`;
+  }
+
+  getTheMoviesByCastUrl(personId) {
+    return `${this.apiBaseUrl}discover/movie?api_key=${this.apiKey}&sort_by=primary_release_date.asc&include_adult=false&include_video=false&with_cast=${personId}`;
+  }
+
+  getMoviesByCast(personId) {
+    return fetch(this.getTheMoviesByCastUrl(personId)).then(data => data.json());
   }
 
   getMovieDetail(movieId) {
-
-    //this.movieDetail.imgBaseUrlMovie = this.state.conf.images.secure_base_url + this.state.conf.images.poster_sizes[2];
-    //this.movieDetail.imgBaseUrlCast = this.state.conf.images.secure_base_url + this.state.conf.images.poster_sizes[0];
 
     fetch(this.getMovieDetailUrl(movieId)).then(data => data.json()).then( movie => {
 
@@ -134,6 +141,13 @@ class App extends Component {
     }).then(data => data.json()).then( credit => {
 
       this.movieDetail.cast= credit.cast;
+
+      this.setState({movie: this.movieDetail});
+      return fetch(this.getConfigUrl());
+
+    }).then(data => data.json()).then( conf => {
+      this.movieDetail.imgBaseUrlMovie = conf.images.base_url + conf.images.poster_sizes[2];
+      this.movieDetail.imgBaseUrlCast = conf.images.base_url + conf.images.poster_sizes[0];
     });
   }
 
@@ -146,7 +160,7 @@ class App extends Component {
             <header className="sticky-top">
               <nav className="navbar navbar-light bg-light">
                 <Link className="navbar-brand" to="/">
-                  <img src="/logo-black.png" width="50px"  className="d-inline-block align-top" alt=""/>
+                  <img id="logoTiff" src="/logo-black.png" width="50px" className="d-inline-block align-top" alt=""/>
                 </Link>
                 <span >Top movies released in 2019</span>
               </nav>
@@ -157,7 +171,7 @@ class App extends Component {
               )}/>
               <Route path="/detail/:id" render={(props) => {
                 let id = props.location.pathname.replace('/detail/','');
-                return(<MovieDetail getMovieDetail={this.getMovieDetail} movie={this.movieDetail} conf={this.state.conf} apiKey={this.apiKey} apiUrl={this.apiBaseUrl} id={id}/>);
+                return(<MovieDetail getMoviesByCast={this.getMoviesByCast} getMovieDetail={this.getMovieDetail} movie={this.state.movie} conf={this.state.conf} apiKey={this.apiKey} apiUrl={this.apiBaseUrl} id={id}/>);
               }}/>
             </Switch>
           </div>

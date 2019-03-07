@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import MovieItem from './MovieItem';
-//import Pagination from 'react-bootstrap/Pagination'
 
 import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 
